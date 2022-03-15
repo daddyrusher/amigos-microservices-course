@@ -1,8 +1,8 @@
 package com.daddyrusher.customer;
 
+import com.daddyrusher.amqp.RabbitMQMessageProducer;
 import com.daddyrusher.clients.fraud.FraudCheckResponse;
 import com.daddyrusher.clients.fraud.FraudClient;
-import com.daddyrusher.clients.notification.NotificationClient;
 import com.daddyrusher.clients.notification.NotificationRequest;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public record CustomerService(
         CustomerRepository repository,
         FraudClient fraudClient,
-        NotificationClient notificationClient) {
+        RabbitMQMessageProducer messageProducer) {
 
     public void registerCustomer(CustomerRegistrationRequest request) {
         Customer customer = Customer.builder()
@@ -27,12 +27,14 @@ public record CustomerService(
             throw new IllegalStateException("fraudster");
         }
 
-        notificationClient.sendNotification(
-                new NotificationRequest(
-                        customer.getId(),
-                        customer.getEmail(),
-                        String.format("Hi %s, welcome to service!", customer.getFirstName()))
-        );
+        NotificationRequest notificationRequest = new NotificationRequest(
+                customer.getId(),
+                customer.getEmail(),
+                String.format("Hi %s, welcome to service!", customer.getFirstName()));
+        messageProducer.publish(
+                notificationRequest,
+                "internal.exchange",
+                "internal.notification.routing-key");
         //todo: add some checks - first name, last name, email
         //todo: store customer in db
         //todo: check if fraudster
