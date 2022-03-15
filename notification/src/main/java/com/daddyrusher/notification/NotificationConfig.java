@@ -1,9 +1,16 @@
 package com.daddyrusher.notification;
 
+import lombok.Getter;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@Getter
 public class NotificationConfig {
 
     @Value("${rabbitmq.exchanges.internal}")
@@ -15,15 +22,21 @@ public class NotificationConfig {
     @Value("${rabbitmq.routing-keys.internal-notification}")
     private String internalRoutingKey;
 
-    public String getInternalExchange() {
-        return internalExchange;
+    @Bean
+    public TopicExchange internalTopicExchange() {
+        return new TopicExchange(this.internalExchange);
     }
 
-    public String getNotificationQueue() {
-        return notificationQueue;
+    @Bean
+    public Queue notificationQueue() {
+        return new Queue(this.notificationQueue);
     }
 
-    public String getInternalRoutingKey() {
-        return internalRoutingKey;
+    @Bean
+    public Binding internalToNotificationBinding() {
+        return BindingBuilder
+                .bind(notificationQueue())
+                .to(internalTopicExchange())
+                .with(this.internalRoutingKey);
     }
 }
