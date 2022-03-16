@@ -28,6 +28,7 @@
         <spring.boot.maven.plugin.version>2.6.1</spring.boot.maven.plugin.version>
         <spring.boot.dependencies.version>2.6.1</spring.boot.dependencies.version>
         <spring.cloud-version>2021.0.1</spring.cloud-version>
+        <image>daddyrusher/${project.artifactId}:${project.version}</image>
     </properties>
 
     <dependencyManagement>
@@ -79,6 +80,31 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>3.1.4</version>
+                    <configuration>
+                        <from>
+                            <image>eclipse-temurin:17</image>
+                            <platorms>
+                                <platform>
+                                    <architecture>arm64</architecture>
+                                    <os>linux</os>
+                                </platform>
+                                <platform>
+                                    <architecture>amd64</architecture>
+                                    <os>linux</os>
+                                </platform>
+                            </platorms>
+                        </from>
+                        <to>
+                            <tags>
+                                <tag>latest</tag>
+                            </tags>
+                        </to>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
