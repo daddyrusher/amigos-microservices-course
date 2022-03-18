@@ -28,7 +28,7 @@
         <spring.boot.maven.plugin.version>2.6.1</spring.boot.maven.plugin.version>
         <spring.boot.dependencies.version>2.6.1</spring.boot.dependencies.version>
         <spring.cloud-version>2021.0.1</spring.cloud-version>
-        <jib.version>3.1.4</jib.version>
+        <jib.version>3.2.0</jib.version>
         <image>daddyrusher/${project.artifactId}:${project.version}</image>
     </properties>
 
@@ -89,7 +89,7 @@
                     <configuration>
                         <from>
                             <image>eclipse-temurin:17</image>
-                            <platorms>
+                            <platforms>
                                 <platform>
                                     <architecture>arm64</architecture>
                                     <os>linux</os>
@@ -98,7 +98,7 @@
                                     <architecture>amd64</architecture>
                                     <os>linux</os>
                                 </platform>
-                            </platorms>
+                            </platforms>
                         </from>
                         <to>
                             <tags>
